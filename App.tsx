@@ -8,11 +8,13 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -24,6 +26,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -60,7 +63,17 @@ function App(): React.JSX.Element {
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    flex:1
   };
+
+  const handleCrashes = ( ) => {
+    try{
+      throw new Error('Test crash for Crashlytics');
+    }catch(e:any){
+      console.log(e)
+      crashlytics().recordError(e);
+    }
+  }
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -68,30 +81,19 @@ function App(): React.JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
         <View
           style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            backgroundColor: isDarkMode ? Colors.black : Colors.white, flex:1
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
+          <Section title="Welcome">
+            Hello <Text style={styles.highlight}>World</Text>
           </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
         </View>
-      </ScrollView>
+        <View style={backgroundStyle}>
+        <TouchableOpacity style={styles.button} onPress={handleCrashes}>
+        <Text>Crashlystics</Text>
+      </TouchableOpacity>
+            </View>
     </SafeAreaView>
   );
 }
@@ -100,6 +102,9 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
+    flex:1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   sectionTitle: {
     fontSize: 24,
@@ -112,6 +117,10 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
   },
 });
 
